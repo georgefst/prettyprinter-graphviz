@@ -63,6 +63,6 @@ tailDef e = \case
     []     -> e
     _ : xs -> xs
 
--- | Helper for rendering an individual 'TextItem'.
+-- | Helper for rendering an individual 'H.TextItem'.
 renderText :: H.Attributes -> T.Text -> H.TextItem
 renderText cs = H.Font cs . pure . H.Str . TL.fromStrict
