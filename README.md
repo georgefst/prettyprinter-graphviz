@@ -1,5 +1,7 @@
-pretty-printing for GraphViz labels
+GraphViz pretty-printing
 ===================================
+
+http://hackage.haskell.org/package/prettyprinter-graphviz
 
 Just some simple utility functions for hooking up the Haskell libraries [graphviz](https://hackage.haskell.org/package/graphviz) and [prettyprinter](https://hackage.haskell.org/package/prettyprinter).
 
