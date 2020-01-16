@@ -1,7 +1,10 @@
 module Data.Text.Prettyprint.Doc.Render.GraphViz (
-    GraphVizRenderError(..),
+    -- * Rendering functions
     render,
     render',
+
+    -- * Error handling
+    GraphVizRenderError(..),
 ) where
 
 import qualified Data.Text.Lazy as TL
@@ -40,7 +43,10 @@ render' =
             SAnnPop ds      -> go (tailDef (throw GVEmptyStack) cs) ds
     in  go []
 
--- | Possible rendering errors - these indicate a corrupted 'SimpleDocStream'.
+
+-- | The functions in this module can throw errors, given a malformed document stream.
+-- The average user is very unlikely to run into this,
+-- but error handling functionality is provided for completeness.
 data GraphVizRenderError
     = GVDocStreamFail
     | GVEmptyStack
