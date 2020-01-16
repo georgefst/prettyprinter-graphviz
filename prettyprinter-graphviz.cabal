@@ -2,12 +2,19 @@ cabal-version:       2.4
 name:                prettyprinter-graphviz
 version:             0.1.0.0
 synopsis:            a prettyprinter backend for graphviz
+description:         Contains utility functions for rendering pretty GraphViz labels.
+homepage:            https://github.com/georgefst/prettyprinter-graphviz
 license:             BSD-3-Clause
 license-file:        LICENSE
 author:              George Thomas
 maintainer:          georgefsthomas@gmail.com
 category:            Graphics
 extra-source-files:  CHANGELOG.md
+                     README.md
+
+source-repository head
+  type:     git
+  location: git://github.com/georgefst/prettyprinter-graphviz.git
 
 library
   exposed-modules:     Data.Text.Prettyprint.Doc.Render.GraphViz
