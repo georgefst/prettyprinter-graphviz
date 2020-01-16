@@ -1,7 +1,7 @@
 module Data.Text.Prettyprint.Doc.Render.GraphViz (
     GraphVizRenderError(..),
     render,
-    renderSDS,
+    render',
 ) where
 
 import qualified Data.Text.Lazy as TL
@@ -12,12 +12,10 @@ import Control.Exception (
         displayException,
         throw,
     )
-import Data.GraphViz.Attributes.HTML (
-        Attribute,
-        Attributes,
-        Text,
-        TextItem(..),
+import Data.GraphViz.Attributes.Complete (
+        Label (HtmlLabel),
     )
+import qualified Data.GraphViz.Attributes.HTML as H
 import Data.Text.Prettyprint.Doc (
         Doc,
         SimpleDocStream (..),
@@ -26,18 +24,18 @@ import Data.Text.Prettyprint.Doc (
     )
 
 -- | Render a document as a GraphViz label, using 'defaultLayoutOptions'.
-render :: Doc Attribute -> Text
-render = renderSDS . layoutPretty defaultLayoutOptions
+render :: Doc H.Attribute -> Label
+render = HtmlLabel . H.Text . render' . layoutPretty defaultLayoutOptions
 
--- | Render a document stream as a GraphViz label.
-renderSDS :: SimpleDocStream Attribute -> Text
-renderSDS =
+-- | Render a document stream as HTML text for GraphViz. This provides more fine-grained control than 'render'.
+render' :: SimpleDocStream H.Attribute -> H.Text
+render' =
     let go cs = \case
             SFail           -> throw GVDocStreamFail
             SEmpty          -> []
             SChar c ds      -> renderText cs (T.singleton c) : go cs ds
             SText _ txt ds  -> renderText cs txt : go cs ds
-            SLine n ds      -> Newline [] : renderText cs (T.replicate n " ") : go cs ds
+            SLine n ds      -> H.Newline [] : renderText cs (T.replicate n " ") : go cs ds
             SAnnPush col ds -> go (col : cs) ds
             SAnnPop ds      -> go (tailDef (throw GVEmptyStack) cs) ds
     in  go []
@@ -60,5 +58,5 @@ tailDef e = \case
     _ : xs -> xs
 
 -- | Helper for rendering an individual 'TextItem'.
-renderText :: Attributes -> T.Text -> TextItem
-renderText cs = Font cs . pure . Str . TL.fromStrict
+renderText :: H.Attributes -> T.Text -> H.TextItem
+renderText cs = H.Font cs . pure . H.Str . TL.fromStrict
