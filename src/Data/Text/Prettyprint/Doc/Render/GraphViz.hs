@@ -11,12 +11,12 @@ import qualified Data.Text.Lazy as TL
 import qualified Data.Text as T
 
 import Control.Exception (
-        Exception,
-        displayException,
-        throw,
+    Exception,
+    displayException,
+    throw,
     )
 import Data.GraphViz.Attributes.Complete (
-        Label (HtmlLabel),
+    Label (HtmlLabel),
     )
 import qualified Data.GraphViz.Attributes.HTML as H
 import Data.Text.Prettyprint.Doc (
@@ -57,7 +57,7 @@ instance Exception GraphVizRenderError where
         GVEmptyStack    -> t ++ "attempted to pop empty attribute stack"
         where t = "Failed to render HTML for GraphViz: "
 
--- | Equal to the funciton of the same name from [safe](https://hackage.haskell.org/package/safe).
+-- | Equal to the function of the same name from [safe](https://hackage.haskell.org/package/safe).
 tailDef :: [a] -> [a] -> [a]
 tailDef e = \case
     []     -> e
