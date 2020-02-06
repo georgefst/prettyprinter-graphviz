@@ -5,6 +5,8 @@ module Data.Text.Prettyprint.Doc.Render.GraphViz (
 
     -- * Error handling
     GraphVizRenderError(..),
+    renderSafe,
+    renderSafe',
 ) where
 
 import qualified Data.Text.Lazy as TL
@@ -28,20 +30,11 @@ import Data.Text.Prettyprint.Doc (
 
 -- | Render a document as a GraphViz label, using 'defaultLayoutOptions'.
 render :: Doc H.Attribute -> Label
-render = HtmlLabel . H.Text . render' . layoutPretty defaultLayoutOptions
+render = either throw id . renderSafe
 
 -- | Render a document stream as HTML text for GraphViz. This provides more fine-grained control than 'render'.
 render' :: SimpleDocStream H.Attribute -> H.Text
-render' =
-    let go cs = \case
-            SFail           -> throw GVDocStreamFail
-            SEmpty          -> []
-            SChar c ds      -> renderText cs (T.singleton c) : go cs ds
-            SText _ txt ds  -> renderText cs txt : go cs ds
-            SLine n ds      -> H.Newline [] : renderText cs (T.replicate n " ") : go cs ds
-            SAnnPush col ds -> go (col : cs) ds
-            SAnnPop ds      -> go (tailDef (throw GVEmptyStack) cs) ds
-    in  go []
+render' = either throw id . renderSafe'
 
 
 -- | The functions in this module can throw errors, given a malformed document stream.
@@ -56,6 +49,27 @@ instance Exception GraphVizRenderError where
         GVDocStreamFail -> t ++ "encountered failure in document stream"
         GVEmptyStack    -> t ++ "attempted to pop empty attribute stack"
         where t = "Failed to render HTML for GraphViz: "
+
+-- | A total version of 'render'.
+renderSafe :: Doc H.Attribute -> Either GraphVizRenderError Label
+renderSafe = fmap (HtmlLabel . H.Text) . renderSafe' . layoutPretty defaultLayoutOptions
+
+-- | A total version of 'render\''.
+-- This can be seen as a generalisation of any of the other functions exported by this module.
+renderSafe' :: SimpleDocStream H.Attribute -> Either GraphVizRenderError H.Text
+renderSafe' =
+    let go cs = \case
+            SFail           -> Left GVDocStreamFail
+            SEmpty          -> Right []
+            SChar c ds      -> renderText cs (T.singleton c) ?: go cs ds
+            SText _ txt ds  -> renderText cs txt ?: go cs ds
+            SLine n ds      -> H.Newline [] ?: renderText cs (T.replicate n " ") ?: go cs ds
+            SAnnPush col ds -> go (col : cs) ds
+            SAnnPop ds      -> go (tailDef (throw GVEmptyStack) cs) ds
+        infixr 0 ?:
+        (?:) = fmap . (:)
+    in  go []
+
 
 -- | Equal to the function of the same name from [safe](https://hackage.haskell.org/package/safe).
 tailDef :: [a] -> [a] -> [a]
