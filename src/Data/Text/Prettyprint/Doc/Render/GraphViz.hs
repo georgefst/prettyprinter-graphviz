@@ -30,11 +30,11 @@ import Data.Text.Prettyprint.Doc (
 
 -- | Render a document as a GraphViz label, using 'defaultLayoutOptions'.
 render :: Doc H.Attribute -> Label
-render = either throw id . renderSafe
+render = throwLeft . renderSafe
 
 -- | Render a document stream as HTML text for GraphViz. This provides more fine-grained control than 'render'.
 render' :: SimpleDocStream H.Attribute -> H.Text
-render' = either throw id . renderSafe'
+render' = throwLeft . renderSafe'
 
 
 -- | The functions in this module can throw errors, given a malformed document stream.
@@ -70,6 +70,12 @@ renderSafe' =
         (?:) = fmap . (:)
     in  go []
 
+
+{- Internal utilities -}
+
+-- | On encountering a 'Left', throw it as an exception.
+throwLeft :: Exception e => Either e a -> a
+throwLeft = either throw id
 
 -- | Equal to the function of the same name from [safe](https://hackage.haskell.org/package/safe).
 tailDef :: [a] -> [a] -> [a]
