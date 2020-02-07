@@ -65,7 +65,7 @@ renderSafe' =
             SText _ txt ds  -> renderText cs txt ?: go cs ds
             SLine n ds      -> H.Newline [] ?: renderText cs (T.replicate n " ") ?: go cs ds
             SAnnPush col ds -> go (col : cs) ds
-            SAnnPop ds      -> go (tailDef (throw GVEmptyStack) cs) ds
+            SAnnPop ds      -> flip go ds =<< maybeToEither GVEmptyStack (tailMay cs)
         infixr 0 ?:
         (?:) = fmap . (:)
     in  go []
@@ -77,11 +77,15 @@ renderSafe' =
 throwLeft :: Exception e => Either e a -> a
 throwLeft = either throw id
 
+-- | Equal to the function of the same name from [extra](https://hackage.haskell.org/package/extra).
+maybeToEither :: a -> Maybe b -> Either a b
+maybeToEither x = maybe (Left x) Right
+
 -- | Equal to the function of the same name from [safe](https://hackage.haskell.org/package/safe).
-tailDef :: [a] -> [a] -> [a]
-tailDef e = \case
-    []     -> e
-    _ : xs -> xs
+tailMay :: [a] -> Maybe [a]
+tailMay = \case
+    []     -> Nothing
+    _ : xs -> Just xs
 
 -- | Helper for rendering an individual 'H.TextItem'.
 renderText :: H.Attributes -> T.Text -> H.TextItem
