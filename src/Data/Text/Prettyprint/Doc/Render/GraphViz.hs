@@ -4,6 +4,9 @@ module Data.Text.Prettyprint.Doc.Render.GraphViz (
     render',
 
     -- * Error handling
+    -- The functions in this module can throw errors, given a malformed document stream.
+    -- The average user is very unlikely to run into this,
+    -- but error handling functionality is provided for completeness.
     GraphVizRenderError(..),
     renderSafe,
     renderSafe',
@@ -36,10 +39,6 @@ render = throwLeft . renderSafe
 render' :: SimpleDocStream H.Attribute -> H.Text
 render' = throwLeft . renderSafe'
 
-
--- | The functions in this module can throw errors, given a malformed document stream.
--- The average user is very unlikely to run into this,
--- but error handling functionality is provided for completeness.
 data GraphVizRenderError
     = GVDocStreamFail
     | GVEmptyStack
@@ -54,7 +53,7 @@ instance Exception GraphVizRenderError where
 renderSafe :: Doc H.Attribute -> Either GraphVizRenderError Label
 renderSafe = fmap (HtmlLabel . H.Text) . renderSafe' . layoutPretty defaultLayoutOptions
 
--- | A total version of 'render\''.
+-- | A total version of 'render''.
 -- This can be seen as a generalisation of any of the other functions exported by this module.
 renderSafe' :: SimpleDocStream H.Attribute -> Either GraphVizRenderError H.Text
 renderSafe' =
