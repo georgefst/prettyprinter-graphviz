@@ -1,3 +1,4 @@
+-- | Pretty-print GraphViz labels
 module Data.Text.Prettyprint.Doc.Render.GraphViz (
     -- * Rendering functions
     render,
@@ -39,8 +40,11 @@ render = throwLeft . renderSafe
 render' :: SimpleDocStream H.Attribute -> H.Text
 render' = throwLeft . renderSafe'
 
+-- | Errors which indicate a malformed 'SimpleDocStream'.
 data GraphVizRenderError
+    -- | The stream ended with 'SFail'.
     = GVDocStreamFail
+    -- | The stream contained more 'SAnnPop's than 'SAnnPush's.
     | GVEmptyStack
     deriving (Eq, Ord, Read, Show)
 instance Exception GraphVizRenderError where
