@@ -1,4 +1,4 @@
-cabal-version:       2.4
+cabal-version:       3.0
 name:                prettyprinter-graphviz
 version:             0.1.1.1
 synopsis:            a prettyprinter backend for graphviz
@@ -20,7 +20,7 @@ library
   exposed-modules:     Data.Text.Prettyprint.Doc.Render.GraphViz
   build-depends:       base >= 4.11 && < 5
                       ,graphviz ^>= 2999.20.0.3
-                      ,prettyprinter ^>= 1.5.1
+                      ,prettyprinter ^>= { 1.5.1, 1.6 }
                       ,text ^>= 1.2.3.1
   hs-source-dirs:      src
   default-language:    Haskell2010
