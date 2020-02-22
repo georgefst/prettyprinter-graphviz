@@ -5,7 +5,7 @@ module Data.Text.Prettyprint.Doc.Render.GraphViz (
     render',
 
     -- * Error handling
-    -- The functions in this module can throw errors, given a malformed document stream.
+    -- | The functions in this module can throw errors, given a malformed document stream.
     -- The average user is very unlikely to run into this,
     -- but error handling functionality is provided for completeness.
     GraphVizRenderError(..),
