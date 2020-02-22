@@ -88,4 +88,7 @@ tailMay = \case
 
 -- | Helper for rendering an individual 'H.TextItem'.
 renderText :: H.Attributes -> T.Text -> H.TextItem
-renderText cs = H.Font cs . pure . H.Str . TL.fromStrict
+renderText cs t
+    | T.null t   = ti -- graphviz doesn't like an empty string between tags
+    | otherwise  = H.Font cs [ti]
+    where ti = H.Str $ TL.fromStrict t
