@@ -28,12 +28,12 @@ import Data.Text.Prettyprint.Doc.Render.Util.Panic (
     )
 
 -- | Render a document as a GraphViz label, using sensible defaults.
-render :: Doc H.Attribute -> Label
+render :: Doc H.Attributes -> Label
 render = HtmlLabel . H.Text . render' . layoutPretty defaultLayoutOptions
 
 -- | Render a document stream as HTML text for GraphViz. This provides more fine-grained control than 'render'.
-render' :: SimpleDocStream H.Attribute -> H.Text
-render' = renderSimplyDecorated' (pure .: renderText) mempty mempty
+render' :: SimpleDocStream H.Attributes -> H.Text
+render' = renderSimplyDecorated' (pure .: (renderText . concat)) mempty mempty
 
 
 {- Util -}
