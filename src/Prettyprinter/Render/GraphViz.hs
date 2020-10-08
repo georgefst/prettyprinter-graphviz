@@ -1,5 +1,5 @@
 -- | Pretty-print GraphViz labels
-module Data.Text.Prettyprint.Doc.Render.GraphViz (
+module Prettyprinter.GraphViz (
     render,
     render',
 ) where
