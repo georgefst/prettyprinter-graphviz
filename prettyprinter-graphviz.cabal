@@ -19,7 +19,7 @@ source-repository head
 
 library
     exposed-modules:
-        Data.Text.Prettyprint.Doc.Render.GraphViz
+        Prettyprinter.Render.GraphViz
     build-depends:
         base >= 4.11 && < 5,
         graphviz ^>= 2999.20.0.3,
