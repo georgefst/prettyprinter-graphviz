@@ -1,6 +1,6 @@
 cabal-version:       3.0
 name:                prettyprinter-graphviz
-version:             1.0.0.2
+version:             1.1.0.0
 synopsis:            A prettyprinter backend for graphviz
 description:         Provides utility functions for rendering pretty GraphViz labels.
 homepage:            https://github.com/georgefst/prettyprinter-graphviz
