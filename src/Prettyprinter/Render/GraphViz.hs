@@ -9,7 +9,7 @@ import qualified Data.Text.Lazy as TL
 
 import Data.GraphViz.Attributes.Complete (Label (HtmlLabel))
 import qualified Data.GraphViz.Attributes.HTML as H
-import Data.Text.Prettyprint.Doc (
+import Prettyprinter (
     Doc,
     SimpleDocStream (
         SAnnPop,
@@ -23,8 +23,8 @@ import Data.Text.Prettyprint.Doc (
     defaultLayoutOptions,
     layoutPretty,
  )
-import Data.Text.Prettyprint.Doc.Internal (textSpaces)
-import Data.Text.Prettyprint.Doc.Render.Util.Panic (
+import Prettyprinter.Internal (textSpaces)
+import Prettyprinter.Render.Util.Panic (
     panicInputNotFullyConsumed,
     panicUncaughtFail,
     panicUnpairedPop,
