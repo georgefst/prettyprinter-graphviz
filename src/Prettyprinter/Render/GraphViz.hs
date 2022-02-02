@@ -48,6 +48,8 @@ render' =
 (.:) :: (c -> d) -> (a -> b -> c) -> a -> b -> d
 (.:) = (.) . (.)
 
+-- note that I once tried to upstream this, and it may yet be worth it: https://github.com/quchen/prettyprinter/pull/164
+
 {- | This is a minor modification of 'renderSimplyDecorated', where the /text/ function is
 additionally passed the current stack, and newlines can be handled specially.
 -}
