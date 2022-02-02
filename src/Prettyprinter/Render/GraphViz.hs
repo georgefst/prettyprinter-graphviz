@@ -36,7 +36,12 @@ render = HtmlLabel . H.Text . render' . layoutPretty defaultLayoutOptions
 
 -- | Render a document stream as HTML text for GraphViz. This provides more fine-grained control than 'render'.
 render' :: SimpleDocStream H.Attributes -> H.Text
-render' = renderSimplyDecorated' mempty mempty
+render' =
+    renderSimplyDecorated'
+        (pure .: (renderText . concat))
+        mempty
+        mempty
+        [H.Newline [H.Align H.HLeft]]
 
 {- Util -}
 
@@ -44,18 +49,28 @@ render' = renderSimplyDecorated' mempty mempty
 (.:) = (.) . (.)
 
 {- | This is a minor modification of 'renderSimplyDecorated', where the /text/ function is
-additionally passed the current stack.
+additionally passed the current stack, and newlines can be handled specially.
 -}
-renderSimplyDecorated' :: ([H.Attribute] -> [H.TextItem]) -> ([H.Attribute] -> [H.TextItem]) -> SimpleDocStream [H.Attribute] -> [H.TextItem]
-renderSimplyDecorated' push pop = go []
+renderSimplyDecorated' ::
+    Monoid out =>
+    -- | Render plain 'Text'
+    ([ann] -> T.Text -> out) ->
+    -- | How to render an annotation
+    (ann -> out) ->
+    -- | How to render the removed annotation
+    (ann -> out) ->
+    -- | How to render a newline
+    out ->
+    SimpleDocStream ann ->
+    out
+renderSimplyDecorated' text push pop newline = go []
   where
-    text = pure .: (renderText . concat)
     go _ SFail = panicUncaughtFail
     go [] SEmpty = mempty
     go (_ : _) SEmpty = panicInputNotFullyConsumed
     go stack (SChar c rest) = text stack (T.singleton c) <> go stack rest
     go stack (SText _l t rest) = text stack t <> go stack rest
-    go stack (SLine i rest) = [H.Newline [H.Align H.HLeft]] <> text stack (textSpaces i) <> go stack rest
+    go stack (SLine i rest) = newline <> text stack (textSpaces i) <> go stack rest
     go stack (SAnnPush ann rest) = push ann <> go (ann : stack) rest
     go (ann : stack) (SAnnPop rest) = pop ann <> go stack rest
     go [] SAnnPop{} = panicUnpairedPop
